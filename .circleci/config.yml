@@ -1,7 +1,7 @@
 version: 2
 
 jobs:
-  build:
+  ruby25: &base
     docker:
        - image: circleci/ruby:2.5
 
@@ -13,6 +13,7 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
+          - v1-dependencies-{{ checksum "Gemfile" }}
           - v1-dependencies-{{ checksum "Gemfile" }}
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
@@ -43,3 +44,14 @@ jobs:
       - store_artifacts:
           path: /tmp/test-results
           destination: test-results
+  ruby26:
+    <<: *base
+    docker:
+      - image: circleci/ruby:2.6
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - ruby25
+      - ruby26
